@@ -31,16 +31,22 @@ public class BookingController
         }
 
         var booking = contract.CreateBooking(hotel);
-        if (booking.Room == null)
-        {
-            Console.WriteLine("Ingen ledige rom for valgt type.");
-            return;
-        }
 
-        service.BookRoom(booking);
-        if (booking.BookingId != Guid.Empty)
+        var result = service.BookRoom(booking)
+            .Bind(booked =>
+            {
+                repository.Add(booked);
+                return new Success<Booking>(booked);
+            });
+
+        switch (result)
         {
-            repository.Add(booking);
+            case Success<Booking> success:
+                Console.WriteLine($"Booking registrert og lagret. Booking-ID: {success.Value.BookingId}");
+                break;
+            case Error<Booking> error:
+                Console.WriteLine(error.Message);
+                break;
         }
     }
 

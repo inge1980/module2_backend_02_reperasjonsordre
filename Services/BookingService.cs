@@ -8,20 +8,17 @@ public class BookingService : IBookingService
 {
     private List<Booking> bookings = new List<Booking>();
 
-    public void BookRoom(Booking booking)
+    public Result<Booking> BookRoom(Booking booking)
     {
-        // Enkel tilgjengelighetssjekk før booking
         if (booking.Room.IsAvailable)
         {
             booking.BookingId = Guid.NewGuid();
             bookings.Add(booking);
             booking.Room.IsAvailable = false;
-            Console.WriteLine($"Booking gjennomført! Booking-ID: {booking.BookingId}");
+            return new Success<Booking>(booking);
         }
-        else
-        {
-            Console.WriteLine("Rommet er dessverre ikke tilgjengelig.");
-        }
+
+        return new Error<Booking>("Rommet er dessverre ikke tilgjengelig.");
     }
 
     public void CancelBooking(Guid bookingId)
