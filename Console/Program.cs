@@ -1,6 +1,8 @@
 ﻿using Core.Models;
 using Core.Services;
 using Core.Repositories;
+using Core.Contracts;
+using System.Linq;
 using Core.Controllers;
 using Core;
 
@@ -14,57 +16,78 @@ class Program
         // Opprett controller med alle dependencies
         var controller = ApplicationBuilder.CreateBookingController();
 
-        // Eksempel på booking som kan komme fra kundeskjema.
-        var bookingForm = new BookingForm
+        Console.WriteLine("Interaktiv test for booking. Trykk Enter uten navn for å avslutte.");
+        while (true)
         {
-            CustomerName = "Ola Nordmann",
-            CustomerEmail = "ola.nordmann@eksempel.com",
-            CustomerPhone = "88888888",
-            RoomType = RoomType.Single,
-            BookingDate = DateTime.Now,
-            CheckInDate = DateTime.Now.AddDays(5),
-            CheckOutDate = DateTime.Now.AddDays(6)
-        };
+            Console.Write("Kundenavn: ");
+            var name = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(name)) break;
 
-        // Gjør booking ut fra skjemaet
-        controller.ProcessBooking(bookingForm);
-        var customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
+            Console.Write("E-post (default: navn@eksempel.com): ");
+            var email = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(email)) email = name.Replace(" ", ".").ToLower() + "@eksempel.com";
 
-        // Skriv ut antall bookinger for kunden
-        Console.WriteLine($"Antall bookinger for {bookingForm.CustomerName}: {customerBookings.Count}");
+            Console.Write("Telefon (default: 88888888): ");
+            var phone = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(phone)) phone = "88888888";
 
-        // Eksempel på kansellering av en booking hvis det finnes noen    
-        if (customerBookings.Any())
-        {
-            // Kanseller den første bookingen for kunden basert på booking-ID
-            controller.CancelBooking(customerBookings.First().BookingId);
-            customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
+            Console.Write("Romtype (Single/Double/Suite) (default: Single): ");
+            var roomTypeInput = Console.ReadLine();
+            var roomType = RoomType.Single;
+            if (!string.IsNullOrWhiteSpace(roomTypeInput) && Enum.TryParse<RoomType>(roomTypeInput, true, out var rt))
+                roomType = rt;
 
-            // Skriv ut antall bookinger for kunden etter kansellering
-            Console.WriteLine($"Antall bookinger for {bookingForm.CustomerName} etter kansellering: {customerBookings.Count}");
-        }
+            var now = DateTime.Now;
+            Console.Write($"Bestillingsdato (yyyy-MM-dd) (default: {now:yyyy-MM-dd}): ");
+            var bookingDateInput = Console.ReadLine();
+            var bookingDate = DateTime.TryParse(bookingDateInput, out var bd) ? bd : now;
 
-        // Eksempel på Result<T> med Success og Error
-        Console.WriteLine();
-        Console.WriteLine("Eksempel på Success og Error med Result<T>:");
+            Console.Write($"Innsjekk (yyyy-MM-dd) (default: {now.AddDays(5):yyyy-MM-dd}): ");
+            var checkInInput = Console.ReadLine();
+            var checkIn = DateTime.TryParse(checkInInput, out var ci) ? ci : now.AddDays(5);
 
-        var parseResult = ParseInt("123");
-        var divisionResult = parseResult.Bind(value => Divide(value, 0));
+            Console.Write($"Utsjekk (yyyy-MM-dd) (default: {now.AddDays(6):yyyy-MM-dd}): ");
+            var checkOutInput = Console.ReadLine();
+            var checkOut = DateTime.TryParse(checkOutInput, out var co) ? co : now.AddDays(6);
 
-        switch (divisionResult)
-        {
-            case Success<decimal> success:
-                Console.WriteLine($"Success: {success.Value}");
-                break;
-            case Error<decimal> error:
-                Console.WriteLine($"Error: {error.Message}");
-                break;
-        }
+            var bookingForm = new BookingForm
+            {
+                CustomerName = name,
+                CustomerEmail = email,
+                CustomerPhone = phone,
+                RoomType = roomType,
+                BookingDate = bookingDate,
+                CheckInDate = checkIn,
+                CheckOutDate = checkOut
+            };
 
-        var parseFailResult = ParseInt("ikke et tall");
-        if (parseFailResult is Error<int> parseError)
-        {
-            Console.WriteLine($"Error ved parsing: {parseError.Message}");
+            if (bookingForm is IValidatableBooking valid && !valid.Validate(out var errors))
+            {
+                Console.WriteLine("Validering feilet:");
+                foreach (var err in errors) Console.WriteLine($"- {err}");
+                continue;
+            }
+
+            controller.ProcessBooking(bookingForm);
+
+            var customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
+            Console.WriteLine($"Antall bookinger for {bookingForm.CustomerName}: {customerBookings.Count}");
+
+            if (customerBookings.Any())
+            {
+                Console.Write("Kanseller første booking? (j/N): ");
+                var cancel = Console.ReadLine();
+                if (string.Equals(cancel, "j", StringComparison.OrdinalIgnoreCase))
+                {
+                    controller.CancelBooking(customerBookings.First().BookingId);
+                    customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
+                    Console.WriteLine($"Antall bookinger for {bookingForm.CustomerName} etter kansellering: {customerBookings.Count}");
+                }
+            }
+
+            Console.WriteLine("Vil du teste en ny booking? (j/N): ");
+            var again = Console.ReadLine();
+            if (!string.Equals(again, "j", StringComparison.OrdinalIgnoreCase)) break;
         }
     }
 
