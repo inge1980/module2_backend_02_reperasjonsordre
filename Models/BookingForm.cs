@@ -3,15 +3,15 @@ using Core.Contracts;
 namespace Core.Models;
 
 // Booking-skjemaet fungerer som en kontrakt fra kunden og inneholder validering.
-public class BookingForm : IBookingContract, IValidatableBooking
+public record BookingForm : IBookingContract, IValidatableBooking
 {
-    public required string CustomerName { get; set; }
-    public required string CustomerEmail { get; set; }
-    public required string CustomerPhone { get; set; }
-    public RoomType RoomType { get; set; }
-    public DateTime BookingDate { get; set; }
-    public DateTime CheckInDate { get; set; }
-    public DateTime CheckOutDate { get; set; }
+    public required string CustomerName { get; init; }
+    public required string CustomerEmail { get; init; }
+    public required string CustomerPhone { get; init; }
+    public RoomType RoomType { get; init; }
+    public DateTime BookingDate { get; init; }
+    public DateTime CheckInDate { get; init; }
+    public DateTime CheckOutDate { get; init; }
 
     public bool Validate(out List<string> errors)
     {

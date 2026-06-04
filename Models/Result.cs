@@ -16,4 +16,13 @@ public static class ResultExtensions
             _ => throw new InvalidOperationException($"Ukjent resultattype: {result?.GetType().Name}")
         };
     }
+
+    public static Result<BookingForm> BindValidRoomType(this Result<BookingForm> result, string? requestedRoomType)
+    {
+        return result is Success<BookingForm> success
+            ? Enum.TryParse<RoomType>(requestedRoomType, true, out var roomType)
+                ? new Success<BookingForm>(success.Value with { RoomType = roomType })
+                : new Error<BookingForm>($"Romtype '{requestedRoomType}' er ikke gyldig.")
+            : result;
+    }
 }
