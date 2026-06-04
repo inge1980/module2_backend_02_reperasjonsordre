@@ -231,6 +231,7 @@ class Program
 {
     static void Main()
     {
+        // Opprett et hotell med noen tilgjengelige rom.
         var hotel = new Hotel
         {
             Name = "Grand Hotel",
@@ -243,11 +244,12 @@ class Program
             }
         };
 
+        // initialiser service, repository og controller
         var bookingService = new BookingService();
         var bookingRepository = new BookingRepository();
         var controller = new BookingController(hotel, bookingService, bookingRepository);
 
-        // Eksempel på booking som kommer fra kundeskjema.
+        // Eksempel på booking som kan komme fra kundeskjema.
         var bookingForm = new BookingForm
         {
             CustomerName = "Ola Nordmann",
@@ -259,15 +261,22 @@ class Program
             CheckOutDate = DateTime.Now.AddDays(6)
         };
 
+        // Gjør booking ut fra skjemaet
         controller.ProcessBooking(bookingForm);
-        var customerBookings = controller.GetCustomerBookings("Ola Nordmann");
-        Console.WriteLine($"Antall bookinger for Ola Nordmann: {customerBookings.Count}");
+        var customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
 
+        // Skriv ut antall bookinger for kunden
+        Console.WriteLine($"Antall bookinger for {bookingForm.CustomerName}: {customerBookings.Count}");
+
+        // Eksempel på kansellering av en booking hvis det finnes noen    
         if (customerBookings.Any())
         {
+            // Kanseller den første bookingen for kunden basert på booking-ID
             controller.CancelBooking(customerBookings.First().BookingId);
-            customerBookings = controller.GetCustomerBookings("Ola Nordmann");
-            Console.WriteLine($"Antall bookinger for Ola Nordmann etter kansellering: {customerBookings.Count}");
+            customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
+
+            // Skriv ut antall bookinger for kunden etter kansellering
+            Console.WriteLine($"Antall bookinger for {bookingForm.CustomerName} etter kansellering: {customerBookings.Count}");
         }
     }
 }
