@@ -21,27 +21,6 @@ interface IBookingContract
     Booking CreateBooking(Hotel hotel);
 }
 
-// Repository for bookinger som lagres i minnet.
-class BookingRepository
-{
-    private readonly List<Booking> bookings = new List<Booking>();
-
-    public void Add(Booking booking) => bookings.Add(booking);
-
-    public bool Remove(Guid bookingId)
-    {
-        var booking = bookings.FirstOrDefault(b => b.BookingId == bookingId);
-        if (booking == null) return false;
-        bookings.Remove(booking);
-        return true;
-    }
-
-    public List<Booking> GetByCustomerName(string customerName)
-    {
-        return bookings.Where(b => b.CustomerName.Equals(customerName, StringComparison.OrdinalIgnoreCase)).ToList();
-    }
-}
-
 class Program
 {
     static void Main()
