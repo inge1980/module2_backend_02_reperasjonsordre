@@ -1,25 +1,11 @@
 ﻿// En enkel hotellbookingmodell som viser hvordan nettbasert skjema-data kan
 // transformeres til en bookingkontrakt og behandles gjennom service og repository.
 
-// Grensesnitt for tjenesten som håndterer bookinger.
-interface IBookingService
-{
-    void BookRoom(Booking booking);
-    void CancelBooking(Guid bookingId);
-    List<Booking> GetBookingsForCustomer(string customerName);
-}
-
-interface IValidatableBooking
-{
-    bool Validate(out List<string> errors);
-}
+// Interfaces er flyttet til `Contracts/`.
+// Se: Contracts/IBookingService.cs, Contracts/IBookingContract.cs, Contracts/IValidatableBooking.cs
 
 
-// Interface for alle bookingkontrakter.
-interface IBookingContract
-{
-    Booking CreateBooking(Hotel hotel);
-}
+// Interface for alle bookingkontrakter er flyttet til `Contracts/IBookingContract.cs`.
 
 class Program
 {
