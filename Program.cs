@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Core.Models;
+﻿using Core.Models;
 using Core.Services;
 using Core.Repositories;
 using Core.Controllers;
-using Core.Contracts;
 
 // En enkel hotellbookingmodell som viser hvordan nettbasert skjema-data kan
 // transformeres til en bookingkontrakt og behandles gjennom service og repository.
-
-// Interfaces og implementasjoner er flyttet til egne mapper under `Contracts/`, `Models/`,
-// `Services/`, `Repositories/` og `Controllers/` for bedre organisering.
 
 class Program
 {
