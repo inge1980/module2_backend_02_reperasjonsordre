@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Models;
+using Core.Contracts;
+
+namespace Core.Services;
 
 // Servicen som håndterer booking-logikk.
 public class BookingService : IBookingService

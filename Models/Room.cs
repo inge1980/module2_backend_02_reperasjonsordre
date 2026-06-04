@@ -1,5 +1,7 @@
 using System;
 
+namespace Core.Models;
+
 // Romtyper og representasjon av et rom ved hotellet.
 public enum RoomType
 {

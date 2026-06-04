@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Models;
+
+namespace Core.Repositories;
 
 // Repository for bookinger lagret i minnet.
 // I en ekte applikasjon ville dette vært et lag som snakker med en database.

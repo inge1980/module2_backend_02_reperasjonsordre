@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Core.Models;
+
+namespace Core.Contracts;
 
 // Kontrakt for booking-tjenesten.
 public interface IBookingService

@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Core.Contracts;
+
+namespace Core.Models;
 
 // Booking-skjemaet fungerer som en kontrakt fra kunden og inneholder validering.
 public class BookingForm : IBookingContract, IValidatableBooking

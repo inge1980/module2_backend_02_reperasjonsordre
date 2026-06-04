@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Models;
+using Core.Contracts;
+using Core.Repositories;
+
+namespace Core.Controllers;
 
 // Controller som videresender bookingdata til riktig tjeneste og repository.
 public class BookingController

@@ -1,5 +1,7 @@
 using System;
 
+namespace Core.Models;
+
 // Modell for en booking som er opprettet fra et kundeskjema.
 public class Booking
 {
