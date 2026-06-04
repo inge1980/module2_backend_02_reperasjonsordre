@@ -1,10 +1,11 @@
 using Core.Models;
+using Core.Contracts;
 
 namespace Core.Repositories;
 
 // Repository for bookinger lagret i minnet.
 // I en ekte applikasjon ville dette vært et lag som snakker med en database.
-public class BookingRepository
+public class BookingRepository : IBookingRepository
 {
     private readonly List<Booking> _bookings = new();
 
@@ -12,12 +13,14 @@ public class BookingRepository
     public void Save(Booking booking) => _bookings.Add(booking);
 
     // Fjern booking basert på bookingId
-    public bool Remove(Guid bookingId)
+    public Result<bool> Remove(Guid bookingId)
     {
         var booking = _bookings.FirstOrDefault(b => b.BookingId == bookingId);
-        if (booking == null) return false;
+        if (booking == null)
+            return new Error<bool>($"Fant ingen booking med ID {bookingId}");
+        
         _bookings.Remove(booking);
-        return true;
+        return new Success<bool>(true);
     }
 
     // Hent alle bookinger for en kunde

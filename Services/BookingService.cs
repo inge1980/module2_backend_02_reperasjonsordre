@@ -21,19 +21,15 @@ public class BookingService : IBookingService
         return new Error<Booking>("Rommet er dessverre ikke tilgjengelig.");
     }
 
-    public void CancelBooking(Guid bookingId)
+    public Result<bool> CancelBooking(Guid bookingId)
     {
         var booking = bookings.FirstOrDefault(b => b.BookingId == bookingId);
-        if (booking != null)
-        {
-            booking.Room.IsAvailable = true;
-            bookings.Remove(booking);
-            Console.WriteLine($"Booking med ID {bookingId} er kansellert.");
-        }
-        else
-        {
-            Console.WriteLine("Fant ingen booking med den oppgitte ID-en.");
-        }
+        if (booking == null)
+            return new Error<bool>($"Fant ingen booking med ID {bookingId}.");
+        
+        booking.Room.IsAvailable = true;
+        bookings.Remove(booking);
+        return new Success<bool>(true);
     }
 
     public List<Booking> GetBookingsForCustomer(string customerName)

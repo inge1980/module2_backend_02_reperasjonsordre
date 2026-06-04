@@ -8,10 +8,10 @@ namespace Core.Controllers;
 public class BookingController
 {
     private readonly IBookingService service;
-    private readonly BookingRepository repository;
+    private readonly IBookingRepository repository;
     private readonly Hotel hotel;
 
-    public BookingController(Hotel hotel, IBookingService service, BookingRepository repository)
+    public BookingController(Hotel hotel, IBookingService service, IBookingRepository repository)
     {
         this.hotel = hotel;
         this.service = service;
@@ -52,8 +52,18 @@ public class BookingController
 
     public void CancelBooking(Guid bookingId)
     {
-        service.CancelBooking(bookingId);
-        repository.Remove(bookingId);
+        var cancelResult = service.CancelBooking(bookingId)
+            .Bind(cancelled => repository.Remove(bookingId));
+
+        switch (cancelResult)
+        {
+            case Success<bool>:
+                Console.WriteLine($"Booking med ID {bookingId} er kansellert.");
+                break;
+            case Error<bool> error:
+                Console.WriteLine($"Kansellering feilet: {error.Message}");
+                break;
+        }
     }
 
     public List<Booking> GetCustomerBookings(string customerName)

@@ -6,6 +6,6 @@ namespace Core.Contracts;
 public interface IBookingService
 {
     Result<Booking> BookRoom(Booking booking);
-    void CancelBooking(Guid bookingId);
+    Result<bool> CancelBooking(Guid bookingId);
     List<Booking> GetBookingsForCustomer(string customerName);
 }
