@@ -6,23 +6,23 @@ namespace Core.Repositories;
 // I en ekte applikasjon ville dette vært et lag som snakker med en database.
 public class BookingRepository
 {
-    private readonly List<Booking> bookings = new List<Booking>();
+    private readonly List<Booking> _bookings = new();
 
-    // Legg til en booking i repo
-    public void Add(Booking booking) => bookings.Add(booking);
+    // Lagre en booking i repo
+    public void Save(Booking booking) => _bookings.Add(booking);
 
     // Fjern booking basert på bookingId
     public bool Remove(Guid bookingId)
     {
-        var booking = bookings.FirstOrDefault(b => b.BookingId == bookingId);
+        var booking = _bookings.FirstOrDefault(b => b.BookingId == bookingId);
         if (booking == null) return false;
-        bookings.Remove(booking);
+        _bookings.Remove(booking);
         return true;
     }
 
     // Hent alle bookinger for en kunde
     public List<Booking> GetByCustomerName(string customerName)
     {
-        return bookings.Where(b => b.CustomerName.Equals(customerName, StringComparison.OrdinalIgnoreCase)).ToList();
+        return _bookings.Where(b => b.CustomerName.Equals(customerName, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 }

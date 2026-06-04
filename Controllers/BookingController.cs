@@ -35,7 +35,7 @@ public class BookingController
         var result = service.BookRoom(booking)
             .Bind(booked =>
             {
-                repository.Add(booked);
+                repository.Save(booked);
                 return new Success<Booking>(booked);
             });
 
