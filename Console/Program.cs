@@ -71,17 +71,28 @@ class Program
             controller.ProcessBooking(bookingForm);
 
             var customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
-            Console.WriteLine($"Antall bookinger for {bookingForm.CustomerName}: {customerBookings.Count}");
-
-            if (customerBookings.Any())
+            if (!customerBookings.Any())
             {
+                Console.WriteLine($"Ingen bookinger for {bookingForm.CustomerName}.");
+            }
+            else
+            {
+                Console.WriteLine($"Bookinger for {bookingForm.CustomerName}:");
+                foreach (var b in customerBookings)
+                {
+                    Console.WriteLine($"- BookingId: {b.BookingId}");
+                    Console.WriteLine($"  Romtype: {b.Room.Type}, Pris: {b.Room.Price}");
+                    Console.WriteLine($"  BookingDate: {b.BookingDate:yyyy-MM-dd}, CheckIn: {b.CheckInDate:yyyy-MM-dd}, CheckOut: {b.CheckOutDate:yyyy-MM-dd}");
+                    Console.WriteLine($"  E-post: {b.CustomerEmail}, Telefon: {b.CustomerPhone}");
+                }
+
                 Console.Write("Kanseller første booking? (j/N): ");
                 var cancel = Console.ReadLine();
                 if (string.Equals(cancel, "j", StringComparison.OrdinalIgnoreCase))
                 {
                     controller.CancelBooking(customerBookings.First().BookingId);
                     customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
-                    Console.WriteLine($"Antall bookinger for {bookingForm.CustomerName} etter kansellering: {customerBookings.Count}");
+                    Console.WriteLine($"Bookinger etter kansellering: {customerBookings.Count}");
                 }
             }
 
