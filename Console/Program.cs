@@ -1,9 +1,5 @@
 ﻿using Core.Models;
-using Core.Services;
-using Core.Repositories;
 using Core.Contracts;
-using System.Linq;
-using Core.Controllers;
 using Core;
 
 // En enkel hotellbookingmodell som viser hvordan nettbasert skjema-data kan
