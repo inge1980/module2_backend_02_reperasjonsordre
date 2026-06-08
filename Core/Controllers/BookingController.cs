@@ -39,6 +39,7 @@ public class BookingController
                 return new Success<Booking>(booked);
             });
 
+        Console.Clear();
         switch (result)
         {
             case Success<Booking> success:

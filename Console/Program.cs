@@ -12,16 +12,15 @@ class Program
         // Opprett controller med alle dependencies
         var controller = ApplicationBuilder.CreateBookingController();
 
-        Console.WriteLine("Interaktiv test for booking. Trykk Enter uten navn for å avslutte.");
+        Console.WriteLine("Interaktiv test for booking.");
         while (true)
         {
             Console.Write("Kundenavn: ");
             var name = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(name)) break;
 
             Console.Write("E-post (default: navn@eksempel.com): ");
             var email = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(email)) email = name.Replace(" ", ".").ToLower() + "@eksempel.com";
+            if (string.IsNullOrWhiteSpace(email)) email = "navn@eksempel.com";
 
             Console.Write("Telefon (default: 88888888): ");
             var phone = Console.ReadLine();
@@ -30,25 +29,25 @@ class Program
             Console.Write("Romtype (Single/Double/Suite) (default: Single): ");
             var roomTypeInput = Console.ReadLine();
             var roomType = RoomType.Single;
-            if (!string.IsNullOrWhiteSpace(roomTypeInput) && Enum.TryParse<RoomType>(roomTypeInput, true, out var rt))
-                roomType = rt;
+            if (!string.IsNullOrWhiteSpace(roomTypeInput) && Enum.TryParse<RoomType>(roomTypeInput, true, out var parsedRoomType))
+                roomType = parsedRoomType;
 
             var now = DateTime.Now;
             Console.Write($"Bestillingsdato (yyyy-MM-dd) (default: {now:yyyy-MM-dd}): ");
             var bookingDateInput = Console.ReadLine();
-            var bookingDate = DateTime.TryParse(bookingDateInput, out var bd) ? bd : now;
+            var bookingDate = DateTime.TryParse(bookingDateInput, out var parsedBookingDate) ? parsedBookingDate : now;
 
             Console.Write($"Innsjekk (yyyy-MM-dd) (default: {now.AddDays(5):yyyy-MM-dd}): ");
             var checkInInput = Console.ReadLine();
-            var checkIn = DateTime.TryParse(checkInInput, out var ci) ? ci : now.AddDays(5);
+            var checkIn = DateTime.TryParse(checkInInput, out var parsedCheckIn) ? parsedCheckIn : now.AddDays(5);
 
             Console.Write($"Utsjekk (yyyy-MM-dd) (default: {now.AddDays(6):yyyy-MM-dd}): ");
             var checkOutInput = Console.ReadLine();
-            var checkOut = DateTime.TryParse(checkOutInput, out var co) ? co : now.AddDays(6);
+            var checkOut = DateTime.TryParse(checkOutInput, out var parsedCheckOut) ? parsedCheckOut : now.AddDays(6);
 
             var bookingForm = new BookingForm
             {
-                CustomerName = name,
+                CustomerName = name ?? "",
                 CustomerEmail = email,
                 CustomerPhone = phone,
                 RoomType = roomType,
@@ -67,7 +66,7 @@ class Program
             controller.ProcessBooking(bookingForm);
 
             var customerBookings = controller.GetCustomerBookings(bookingForm.CustomerName);
-            if (!customerBookings.Any())
+            if (customerBookings.Count == 0)
             {
                 Console.WriteLine($"Ingen bookinger for {bookingForm.CustomerName}.");
             }
@@ -98,17 +97,4 @@ class Program
         }
     }
 
-    static Result<int> ParseInt(string input)
-    {
-        return int.TryParse(input, out var value)
-            ? new Success<int>(value)
-            : new Error<int>($"'{input}' er ikke et gyldig tall.");
-    }
-
-    static Result<decimal> Divide(int value, int divisor)
-    {
-        return divisor == 0
-            ? new Error<decimal>("Kan ikke dele på null.")
-            : new Success<decimal>(value / (decimal)divisor);
-    }
 }

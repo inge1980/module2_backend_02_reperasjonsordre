@@ -2,7 +2,6 @@ using Core.Models;
 using Core.Services;
 using Core.Repositories;
 using Core.Controllers;
-using Core.Contracts;
 
 namespace Core;
 
