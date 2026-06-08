@@ -22,7 +22,7 @@ A backend C# system for hotel booking management built from customer input forms
 
 2. **Run the program**:
    ```bash
-   dotnet run
+   dotnet run --project Console/Console.csproj
    ```
 
 3. **Follow the prompts**:
